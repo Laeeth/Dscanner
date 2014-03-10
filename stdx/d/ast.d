@@ -1076,6 +1076,7 @@ public:
     }
     /** */ Token name;
     /** */ Initializer initializer;
+    /** */ TypeSuffix[] typeSuffixes;
 }
 
 ///

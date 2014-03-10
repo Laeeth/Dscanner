@@ -1995,10 +1995,19 @@ class ClassFour(A, B) if (someTest()) : Super {}}c;
         auto id = expect(tok!"identifier");
         if (id is null) return null;
         node.name = *id;
-        if (currentIsOneOf(tok!"[", tok!"*"))
+        if (currentIs(tok!"[")) // dmd doesn't accept pointer after identifier
         {
-            error("C-style variable declarations are not supported.");
-            return null;
+            warn("C-style array declaration.");
+            TypeSuffix[] typeSuffixes;
+            while (moreTokens() && currentIs(tok!"["))
+            {
+                auto suffix = parseTypeSuffix();
+                if (suffix !is null)
+                    typeSuffixes ~= suffix;
+                else
+                    return null;
+            }
+            node.typeSuffixes = ownArray(typeSuffixes);
         }
         if (currentIs(tok!"="))
         {
